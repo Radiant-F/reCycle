@@ -3,7 +3,6 @@ import React, {Component} from 'react';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import {connect} from 'react-redux';
 import Geolocation from 'react-native-geolocation-service';
-
 import {
   Alert,
   Image,
@@ -13,6 +12,7 @@ import {
   View,
   ScrollView,
   ActivityIndicator,
+  Switch,
 } from 'react-native';
 import {TextInput, TouchableNativeFeedback} from 'react-native-gesture-handler';
 
@@ -21,25 +21,17 @@ class Request extends Component {
     super(props);
     this.state = {
       name: '',
-      id: this.getID(),
+      user: '',
       nomer: '',
       keterangan: '',
       alamat: '',
       pesan: '',
-      token: this.getToken(),
       loading: false,
       lokasi: '',
       nama_lokasi: '',
+      token: this.getToken(),
+      switch: false,
     };
-  }
-
-  getID() {
-    AsyncStorage.getItem('id')
-      .then((value) => {
-        JSON.parse(value);
-        this.setState({id: value});
-      })
-      .catch((err) => console.log('terjadi kesalahan async storage. ', err));
   }
 
   getToken() {
@@ -50,10 +42,16 @@ class Request extends Component {
   }
 
   componentDidMount() {
+    // this.getUser()
+    this.getLocation();
+  }
+
+  getLocation() {
     Geolocation.getCurrentPosition(
       (position) => {
-        console.log(position);
+        // console.log(position);
         this.setState({lokasi: position.coords});
+        console.log(this.state.lokasi);
         this.getLocationInfo();
       },
       (error) => {
@@ -76,8 +74,26 @@ class Request extends Component {
     )
       .then((response) => response.json())
       .then((responseJSON) => {
-        this.setState({nama_lokasi: responseJSON});
+        this.setState({
+          nama_lokasi: responseJSON,
+          alamat: responseJSON.display_name,
+        });
         console.log(this.state.nama_lokasi);
+      })
+      .catch((err) => console.log(err));
+  }
+
+  getUser() {
+    fetch('http://mini-project-e.herokuapp.com/api/user', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${this.state.token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((responseJSON) => {
+        this.setState({user: responseJSON.user});
       })
       .catch((err) => console.log(err));
   }
@@ -101,7 +117,7 @@ class Request extends Component {
         alamat: alamat,
       };
       fetch(
-        `http://mini-project-e.herokuapp.com/api/penjemputan/${this.state.id}`,
+        `http://mini-project-e.herokuapp.com/api/penjemputan/${this.state.user.id}`,
         {
           method: 'POST',
           body: JSON.stringify(kirimData),
@@ -159,49 +175,83 @@ class Request extends Component {
           <Text> Request Penjemputan Sampah </Text>
         </View>
         <ScrollView>
-          <View style={styles.content}>
-            <View style={styles.viewMainInput}>
-              <View style={styles.viewInput}>
-                <Image
-                  source={require('../../assets/iconPengurus.png')}
-                  style={styles.headerIcon}
-                />
+          <View style={{padding: 10}}>
+            <View style={styles.viewContent}>
+              <Image
+                source={require('../../assets/iconPengurus.png')}
+                style={styles.imgIcon}
+              />
+              <View style={{flex: 1}}>
+                <Text style={{color: 'grey'}}>
+                  Nama Pengirim (max 15 karakter)
+                </Text>
                 <TextInput
+                  maxLength={15}
+                  style={styles.mainInput}
+                  placeholder="Abang Pengurus"
                   onChangeText={(input) => this.setState({name: input})}
-                  placeholder="Nama Pengirim"
                 />
               </View>
             </View>
-            <View style={styles.viewMainInput}>
-              <View style={styles.viewInput}>
-                <Image
-                  source={require('../../assets/phone-working-indicator.png')}
-                  style={styles.headerIcon}
-                />
+            <View style={{margin: 5}}></View>
+            <View style={styles.viewContent}>
+              <Image
+                source={require('../../assets/phone-working-indicator.png')}
+                style={styles.imgIcon}
+              />
+              <View style={{flex: 1}}>
+                <Text style={{color: 'grey'}}>Nomor Telepon</Text>
                 <TextInput
+                  maxLength={15}
+                  style={styles.mainInput}
+                  placeholder="08xxx"
                   onChangeText={(input) => this.setState({nomer: input})}
-                  placeholder="Nomor Telepon Anda"
+                  defaultValue={this.state.user.nomer}
+                  keyboardType="number-pad"
                 />
               </View>
             </View>
-            <View style={styles.viewMainInput}>
-              <View style={styles.viewInput}>
-                <Image
-                  source={require('../../assets/map-placeholder.png')}
-                  style={styles.headerIcon}
-                />
+            <View style={{margin: 5}}></View>
+            <View style={styles.viewContent}>
+              <Image
+                source={require('../../assets/map-placeholder.png')}
+                style={styles.imgIcon}
+              />
+              <View style={{flex: 1}}>
+                <Text style={{color: 'grey'}}>Alamat Pengiriman</Text>
                 <TextInput
-                  onChangeText={(input) => this.setState({alamat: input})}
+                  style={{...styles.mainInput, maxWidth: '100%'}}
                   placeholder="Alamat Pengiriman"
+                  onChangeText={(input) => this.setState({alamat: input})}
+                  defaultValue={
+                    this.state.user.alamat == ''
+                      ? this.state.switch
+                        ? this.state.alamat
+                        : this.state.user.alamat
+                      : this.state.user.alamat
+                  }
                 />
               </View>
             </View>
-            <View style={styles.viewMainInput}>
-              <View style={styles.viewMap}>
+            <View style={{margin: 2}}></View>
+            <View
+              style={{...styles.viewContent, justifyContent: 'space-between'}}>
+              <Text>Gunakan Lokasi Saat Ini?</Text>
+              <Switch
+                value={this.state.switch}
+                thumbColor={this.state.switch ? '#1d8500d4' : '#854700d4'}
+                onValueChange={() =>
+                  this.setState({switch: !this.state.switch})
+                }
+              />
+            </View>
+            <View style={{margin: 2}}></View>
+            {this.state.switch ? (
+              <View style={styles.viewContent}>
                 {this.state.nama_lokasi == '' ? (
-                  <View>
-                    <ActivityIndicator size="large" color="green" />
-                    <Text>Melacak Anda..</Text>
+                  <View style={styles.viewMap}>
+                    <ActivityIndicator color="green" size="large" />
+                    <Text>Melacak Anda</Text>
                   </View>
                 ) : (
                   <>
@@ -226,27 +276,33 @@ class Request extends Component {
                   </>
                 )}
               </View>
-            </View>
-            <View style={styles.viewMainInput}>
-              <View style={styles.viewInput}>
-                <Image
-                  source={require('../../assets/chat-bubbles.png')}
-                  style={styles.headerIcon}
-                />
+            ) : (
+              <></>
+            )}
+            <View style={{margin: 5}}></View>
+            <View style={styles.viewContent}>
+              <Image
+                source={require('../../assets/chat-bubbles.png')}
+                style={styles.imgIcon}
+              />
+              <View style={{flex: 1}}>
+                <Text style={{color: 'grey'}}>Tambah Keterangan</Text>
                 <TextInput
+                  style={styles.inputMessage}
+                  placeholder="Rumah saya warna hijau"
                   onChangeText={(input) => this.setState({keterangan: input})}
-                  placeholder="Tambah Keterangan"
                 />
               </View>
             </View>
+            <View style={{margin: 5}}></View>
             {this.state.loading ? (
               <View style={styles.viewTouch}>
                 <ActivityIndicator color="green" size="large" />
               </View>
             ) : (
               <TouchableNativeFeedback onPress={() => this.sendRequest()}>
-                <View style={styles.viewTouch}>
-                  <Text style={styles.textTouch}>Minta Jemput</Text>
+                <View style={styles.viewButton}>
+                  <Text style={styles.textButton}>Minta Jemput</Text>
                 </View>
               </TouchableNativeFeedback>
             )}
@@ -270,59 +326,55 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     elevation: 3,
   },
-  viewInput: {
-    backgroundColor: 'white',
-    borderRadius: 5,
-    elevation: 2,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    borderWidth: 0.5,
-    height: 45,
-  },
-  viewMainInput: {
-    width: 300,
-    margin: 5,
-  },
-  textInput: {
-    marginVertical: 15,
-    includeFontPadding: false,
-    fontSize: 20,
-  },
-  content: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginVertical: 10,
-  },
-  viewTouch: {
-    width: 300,
+  viewButton: {
+    padding: 10,
     backgroundColor: '#1d8500d4',
-    height: 45,
     borderRadius: 5,
-    elevation: 2,
-    borderWidth: 0.5,
+    elevation: 3,
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: 5,
+    marginBottom: 10,
   },
-  textTouch: {
+  textButton: {
     color: 'white',
     fontWeight: 'bold',
     fontSize: 20,
   },
   viewMap: {
-    backgroundColor: 'white',
-    borderRadius: 5,
-    elevation: 2,
+    flex: 1,
     alignItems: 'center',
-    padding: 10,
-    borderWidth: 0.5,
-    height: 350,
     justifyContent: 'center',
+    height: 300,
   },
   viewSubMap: {
     width: 200,
     height: 200,
+  },
+  imgIcon: {
+    width: 35,
+    height: 35,
+    marginRight: 15,
+  },
+  viewContent: {
+    backgroundColor: 'white',
+    elevation: 2,
+    borderRadius: 5,
+    padding: 10,
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  mainInput: {
+    height: 40,
+    fontSize: 17,
+    fontWeight: 'bold',
+    includeFontPadding: false,
+    borderBottomWidth: 0.5,
+  },
+  inputMessage: {
+    borderWidth: 0.5,
+    marginTop: 5,
+    height: 40,
+    paddingHorizontal: 10,
   },
 });
 

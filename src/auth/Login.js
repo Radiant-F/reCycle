@@ -45,7 +45,6 @@ class Login extends Component {
           if (responseJSON.token != null) {
             this.props.changeUser({token: responseJSON.token});
             AsyncStorage.setItem('token', responseJSON.token);
-            AsyncStorage.setItem('id', JSON.stringify(responseJSON.user.id));
             AsyncStorage.setItem(
               'role',
               JSON.stringify(responseJSON.user.role),
