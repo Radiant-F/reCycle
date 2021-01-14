@@ -13,7 +13,6 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import {loadPartialConfig} from '@babel/core';
 
 export default class ProfileEdit extends Component {
   constructor() {

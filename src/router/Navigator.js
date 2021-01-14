@@ -9,7 +9,7 @@ import Intro from '../components/Intro';
 import Drawer from './Drawer';
 import ChatScreen from '../screens/ChatScreen';
 import Request from '../screens/nasabah/Request';
-import ProfileEdit from '../screens/ProfileEdit';
+import ProfileEdit from '../screens/EditProfile';
 import ConfrimRequest from '../screens/pengurus1/ConfrimRequest';
 import Contact from '../screens/Contact';
 import Recovery from '../auth/Recovery';
