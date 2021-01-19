@@ -21,15 +21,15 @@ class Request extends Component {
     super(props);
     this.state = {
       name: '',
-      user: '',
       nomer: '',
-      keterangan: '',
       alamat: '',
-      pesan: '',
-      loading: false,
+      keterangan: '',
+      token: '',
+      user: '',
       lokasi: '',
+      id: '',
       nama_lokasi: '',
-      token: this.getToken(),
+      loading: false,
       switch: false,
     };
   }
@@ -42,8 +42,13 @@ class Request extends Component {
   }
 
   componentDidMount() {
-    // this.getUser()
-    this.getLocation();
+    AsyncStorage.getItem('token')
+      .then((value) => {
+        this.setState({token: value});
+        console.log(value);
+        this.getUser();
+      })
+      .catch((err) => console.log(err));
   }
 
   getLocation() {
@@ -76,14 +81,14 @@ class Request extends Component {
       .then((responseJSON) => {
         this.setState({
           nama_lokasi: responseJSON,
-          alamat: responseJSON.display_name,
         });
-        console.log(this.state.nama_lokasi);
+        console.log(this.state.nama_lokasi.display_name);
       })
       .catch((err) => console.log(err));
   }
 
   getUser() {
+    console.log('mengambil info user..');
     fetch('http://mini-project-e.herokuapp.com/api/user', {
       method: 'GET',
       headers: {
@@ -93,31 +98,36 @@ class Request extends Component {
     })
       .then((response) => response.json())
       .then((responseJSON) => {
-        this.setState({user: responseJSON.user});
+        this.setState({
+          user: responseJSON.user,
+          nomer: responseJSON.user.nomer,
+          alamat: responseJSON.user.alamat,
+          id: responseJSON.user.id,
+        });
+        console.log('user id: ', this.state.id);
+        this.getLocation();
       })
-      .catch((err) => console.log(err));
+      .catch((err) => this.error(err));
   }
 
   sendRequest() {
     if (
       this.state.name &&
-      this.state.id &&
       this.state.nomer &&
       this.state.keterangan &&
       this.state.alamat != ''
     ) {
       console.log('mengirim request..');
       this.setState({loading: true});
-      const {name, id, nomer, keterangan, alamat} = this.state;
+      const {name, nomer, keterangan, alamat} = this.state;
       const kirimData = {
         name: name,
-        user_id: id,
         nomer: nomer,
         keterangan: keterangan,
         alamat: alamat,
       };
       fetch(
-        `http://mini-project-e.herokuapp.com/api/penjemputan/${this.state.user.id}`,
+        `http://mini-project-e.herokuapp.com/api/penjemputan/create/${this.state.id}`,
         {
           method: 'POST',
           body: JSON.stringify(kirimData),
@@ -139,7 +149,7 @@ class Request extends Component {
             this.error();
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => this.error(err));
     } else {
       this.alert2();
     }
@@ -157,8 +167,11 @@ class Request extends Component {
     });
   }
 
-  error() {
-    Alert.alert('Terjadi Kesalahan', 'Gagal mengirim request.', [{text: 'Ok'}]);
+  error(err) {
+    console.log(err);
+    Alert.alert('Terjadi Kesalahan', 'Periksa koneksi Anda.', [{text: 'Ok'}]);
+    this.setState({loading: false});
+    // this.getLocation();
   }
 
   render() {
@@ -206,7 +219,7 @@ class Request extends Component {
                   style={styles.mainInput}
                   placeholder="08xxx"
                   onChangeText={(input) => this.setState({nomer: input})}
-                  defaultValue={this.state.user.nomer}
+                  value={this.state.nomer}
                   keyboardType="number-pad"
                 />
               </View>
@@ -219,35 +232,45 @@ class Request extends Component {
               />
               <View style={{flex: 1}}>
                 <Text style={{color: 'grey'}}>Alamat Pengiriman</Text>
-                <TextInput
-                  style={{...styles.mainInput, maxWidth: '100%'}}
-                  placeholder="Alamat Pengiriman"
-                  onChangeText={(input) => this.setState({alamat: input})}
-                  defaultValue={
-                    this.state.user.alamat == ''
-                      ? this.state.switch
-                        ? this.state.alamat
-                        : this.state.user.alamat
-                      : this.state.user.alamat
-                  }
-                />
+                {this.state.switch ? (
+                  <TextInput
+                    style={{...styles.mainInput, maxWidth: '100%'}}
+                    placeholder="Alamat Pengiriman"
+                    onChangeText={(input) => this.setState({alamat: input})}
+                    value={this.state.nama_lokasi.display_name}
+                  />
+                ) : (
+                  <TextInput
+                    style={{...styles.mainInput, maxWidth: '100%'}}
+                    placeholder="Alamat Pengiriman"
+                    onChangeText={(input) => this.setState({alamat: input})}
+                    value={this.state.alamat}
+                  />
+                )}
               </View>
             </View>
             <View style={{margin: 2}}></View>
-            <View
-              style={{...styles.viewContent, justifyContent: 'space-between'}}>
-              <Text>Gunakan Lokasi Saat Ini?</Text>
-              <Switch
-                value={this.state.switch}
-                thumbColor={this.state.switch ? '#1d8500d4' : '#854700d4'}
-                onValueChange={() =>
-                  this.setState({switch: !this.state.switch})
-                }
-              />
-            </View>
+            <TouchableNativeFeedback
+              onPress={() => this.setState({switch: !this.state.switch})}>
+              <View
+                style={{
+                  ...styles.viewContent,
+                  justifyContent: 'space-between',
+                  marginBottom: 2,
+                }}>
+                <Text>Gunakan Lokasi Saat Ini?</Text>
+                <Switch
+                  value={this.state.switch}
+                  thumbColor={this.state.switch ? '#1d8500d4' : '#854700d4'}
+                  onValueChange={() =>
+                    this.setState({switch: !this.state.switch})
+                  }
+                />
+              </View>
+            </TouchableNativeFeedback>
             <View style={{margin: 2}}></View>
             {this.state.switch ? (
-              <View style={styles.viewContent}>
+              <View style={styles.viewContent2}>
                 {this.state.nama_lokasi == '' ? (
                   <View style={styles.viewMap}>
                     <ActivityIndicator color="green" size="large" />
@@ -272,7 +295,9 @@ class Request extends Component {
                           longitude: this.state.lokasi.longitude,
                         }}></Marker>
                     </MapView>
-                    <Text>{this.state.nama_lokasi.display_name}</Text>
+                    <Text style={{textAlign: 'center'}}>
+                      {this.state.nama_lokasi.display_name}
+                    </Text>
                   </>
                 )}
               </View>
@@ -296,13 +321,13 @@ class Request extends Component {
             </View>
             <View style={{margin: 5}}></View>
             {this.state.loading ? (
-              <View style={styles.viewTouch}>
-                <ActivityIndicator color="green" size="large" />
+              <View style={styles.viewButton}>
+                <ActivityIndicator color="white" size="small" />
               </View>
             ) : (
               <TouchableNativeFeedback onPress={() => this.sendRequest()}>
                 <View style={styles.viewButton}>
-                  <Text style={styles.textButton}>Minta Jemput</Text>
+                  <Text style={styles.textButton}>Setor</Text>
                 </View>
               </TouchableNativeFeedback>
             )}
@@ -362,6 +387,13 @@ const styles = StyleSheet.create({
     padding: 10,
     alignItems: 'center',
     flexDirection: 'row',
+  },
+  viewContent2: {
+    backgroundColor: 'white',
+    elevation: 2,
+    borderRadius: 5,
+    padding: 10,
+    alignItems: 'center',
   },
   mainInput: {
     height: 40,

@@ -45,7 +45,7 @@ export default class ProfileEdit extends Component {
     this.setState({
       name: this.props.route.params.user.name,
       alamat: this.props.route.params.user.alamat,
-      nomor: this.props.route.params.user.nomer,
+      nomer: this.props.route.params.user.nomer,
       avatar: this.props.route.params.user.avatar,
       email: this.props.route.params.user.email,
       id: this.props.route.params.user.id,
@@ -54,12 +54,12 @@ export default class ProfileEdit extends Component {
 
   updateUser() {
     if (this.state.edited) {
-      const {name, alamat, nomor, photo, email} = this.state;
+      const {name, alamat, nomer, photo, email} = this.state;
       if (photo.name === undefined) {
         const kirimData = {
           name: name,
           alamat: alamat,
-          nomor: nomor,
+          nomer: nomer,
           email: email,
         };
         this.setState({loading: true});
@@ -147,7 +147,7 @@ export default class ProfileEdit extends Component {
     };
     ImagePicker.launchImageLibrary(options, (response) => {
       if (response.uri) {
-        this.setState({photo: response});
+        this.setState({photo: response, edited: true});
         console.log(JSON.stringify(response));
       }
     });
@@ -191,7 +191,7 @@ export default class ProfileEdit extends Component {
             </TouchableWithoutFeedback>
             {this.state.loading ? (
               <View style={styles.viewButton}>
-                <ActivityIndicator size="small" color="green" />
+                <ActivityIndicator size="small" color="white" />
               </View>
             ) : (
               <TouchableNativeFeedback onPress={() => this.updateUser()}>
@@ -248,8 +248,8 @@ export default class ProfileEdit extends Component {
                 keyboardType="number-pad"
                 placeholder="Nomor Anda"
                 style={styles.mainInput}
-                value={this.state.nomor}
-                onChangeText={(input) => this.setState({nomor: input})}
+                value={this.state.nomer}
+                onChangeText={(input) => this.setState({nomer: input})}
               />
             </View>
           </View>

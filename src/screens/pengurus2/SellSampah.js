@@ -17,15 +17,26 @@ export default class SellSampah extends Component {
     super();
     this.state = {
       jenis: '',
-      stok: 0,
+      total: '',
+      stok_asli: '',
+      stok_input: '',
       harga: '',
-      total: 0,
       token: '',
     };
   }
 
   toPrice(price) {
     return _.replace(price, /\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+
+  stok(input) {
+    if (this.state.stok_input >= this.state.stok_asli) {
+      this.setState({stok_input: this.state.stok_asli});
+    } else if (this.state.stok_input <= this.state.stok_asli) {
+      this.setState({stok_input: input});
+    } else {
+      console.log('what');
+    }
   }
 
   componentDidMount() {
@@ -36,7 +47,7 @@ export default class SellSampah extends Component {
       .catch((err) => console.log(err));
     this.setState({
       jenis: this.props.route.params.jenis,
-      stok: this.props.route.params.stok,
+      stok_asli: this.props.route.params.stok,
     });
   }
 
@@ -92,11 +103,16 @@ export default class SellSampah extends Component {
                 <TextInput
                   placeholder="Berat Sampah"
                   placeholderTextColor="white"
-                  style={{...styles.textJual, width: '65%'}}
-                  value={this.state.stok}
-                  onChangeText={(input) => this.setState({total: input})}
+                  keyboardType="decimal-pad"
+                  style={{
+                    ...styles.textJual,
+                    width: '65%',
+                    borderBottomWidth: 1,
+                  }}
+                  value={this.state.stok_asli}
+                  onChangeText={(input) => this.stok(input)}
                 />
-                <Text style={{fontWeight: 'bold'}}>KG</Text>
+                <Text style={{fontWeight: 'bold', fontSize: 25}}>KG</Text>
               </View>
               <Text style={{color: 'grey'}}>
                 Harga per-KG: <Text style={{color: 'black'}}>Rp.2000,-</Text>
@@ -108,11 +124,12 @@ export default class SellSampah extends Component {
             style={{...styles.viewContent, justifyContent: 'space-between'}}>
             <Text style={styles.textJual}>Total Penjualan</Text>
             <Text style={styles.textJual}>
-              Rp.{this.toPrice(this.state.total * 2000)},-
+              Rp.{this.toPrice(this.state.stok_input * 2000)},-
             </Text>
           </View>
           <View style={{margin: 5}}></View>
-          <TouchableNativeFeedback>
+          <TouchableNativeFeedback
+            onPress={() => this.props.navigation.goBack()}>
             <View style={styles.viewButton}>
               <Text style={styles.textButton}>Jual</Text>
             </View>

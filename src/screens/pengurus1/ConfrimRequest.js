@@ -21,7 +21,7 @@ export default class ConfrimRequest extends Component {
       token: '',
       data: 'a',
       loading: true,
-      lokasi: this.getLocation(),
+      // lokasi: this.getLocation(),
       nama_lokasi: '',
     };
   }
@@ -146,7 +146,7 @@ export default class ConfrimRequest extends Component {
                   <Text style={styles.textNasabah}>Bandung</Text>
                 </View>
               </View>
-              <View style={{margin: 5}}></View>
+              {/* <View style={{margin: 5}}></View>
               {this.state.nama_lokasi == '' ? (
                 <View style={styles.viewMap}>
                   <ActivityIndicator color="green" size="large" />
@@ -174,7 +174,7 @@ export default class ConfrimRequest extends Component {
                     {this.state.nama_lokasi.display_name}
                   </Text>
                 </View>
-              )}
+              )} */}
               <View style={{margin: 5}}></View>
               <View style={styles.viewUser}>
                 <Image

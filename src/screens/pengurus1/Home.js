@@ -41,7 +41,7 @@ export default class Home extends Component {
   }
 
   getSetor() {
-    fetch('', {
+    fetch(``, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

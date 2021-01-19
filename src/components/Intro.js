@@ -21,7 +21,7 @@ export default class Intro extends Component {
         <Lottie
           source={require('../assets/23968-save-environment.json')}
           autoPlay
-          style={{width: 200, height: 200}}
+          style={{width: 350, height: 350}}
         />
         <Text style={styles.text}>
           Kumpulkan sampah masyarakat, selamatkan lingkungan, dan dapatkan uang!

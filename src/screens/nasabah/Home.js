@@ -36,7 +36,7 @@ class Home extends Component {
     AsyncStorage.getItem('token').then((value) => {
       this.setState({token: value});
       console.log('token tersedia.');
-      this.changeStateA();
+      this.changeStateC();
     });
   }
 
@@ -76,7 +76,6 @@ class Home extends Component {
   }
 
   render() {
-    // console.log('token redux: ', this.props.user.token);
     console.log(this.state.konten);
     return (
       <View style={{flex: 1}}>
@@ -255,9 +254,13 @@ class Home extends Component {
                               {this.state.konten == 'konten3' ? (
                                 <View style={styles.viewMainHistory}>
                                   <View style={{flexDirection: 'row'}}>
-                                    <View style={{flex: 1}}>
+                                    <View
+                                      style={{
+                                        flex: 1,
+                                        justifyContent: 'space-between',
+                                      }}>
                                       <View style={styles.viewDelivery}>
-                                        {this.state.status == 1 ? (
+                                        {this.state.status == 0 ? (
                                           <>
                                             <Image
                                               source={require('../../assets/clock-with-white-face.png')}
@@ -269,7 +272,7 @@ class Home extends Component {
                                           </>
                                         ) : (
                                           <>
-                                            {this.state.status == 2 ? (
+                                            {this.state.status == 1 ? (
                                               <>
                                                 <Image
                                                   source={require('../../assets/icons8-large-courier-truck-64.png')}
@@ -293,18 +296,35 @@ class Home extends Component {
                                           </>
                                         )}
                                       </View>
-                                      <Text style={{color: 'grey'}}>
+                                      <Text style={{color: 'grey', bottom: 0}}>
                                         20 Desember 2020
                                       </Text>
                                     </View>
                                     <View style={styles.viewAlamat}>
-                                      <Image
-                                        source={require('../../assets/map-placeholder.png')}
-                                        style={styles.imgMap}
-                                      />
-                                      <View style={{width: 100}}>
-                                        <Text>BPK Blok G 21/23</Text>
+                                      <View
+                                        style={{
+                                          flexDirection: 'row',
+                                          alignItems: 'center',
+                                        }}>
+                                        <Image
+                                          source={require('../../assets/map-placeholder.png')}
+                                          style={styles.imgMap}
+                                        />
+                                        <View style={{width: 100}}>
+                                          <Text>BPK Blok G 21/23</Text>
+                                        </View>
                                       </View>
+                                      <TouchableNativeFeedback>
+                                        <View style={styles.viewChat}>
+                                          <Image
+                                            source={require('../../assets/chat-bubbles.png')}
+                                            style={styles.imgChat}
+                                          />
+                                          <Text style={styles.textChat}>
+                                            Chat Pengurus
+                                          </Text>
+                                        </View>
+                                      </TouchableNativeFeedback>
                                     </View>
                                   </View>
                                 </View>
@@ -500,8 +520,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   viewAlamat: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    // alignItems: 'center',
     marginVertical: 5,
   },
   imgMap: {
@@ -521,6 +540,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 7,
+  },
+  viewChat: {
+    backgroundColor: '#1d8500d4',
+    borderRadius: 5,
+    elevation: 3,
+    padding: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  textChat: {
+    color: 'white',
+  },
+  imgChat: {
+    tintColor: 'white',
+    width: 20,
+    height: 20,
+    marginRight: 10,
   },
 });
 
