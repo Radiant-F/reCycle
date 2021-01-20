@@ -5,6 +5,7 @@ import {
   ActivityIndicator,
   Alert,
   Image,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -12,14 +13,15 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import {Picker} from '@react-native-picker/picker';
 
 export default class AddSampah extends Component {
   constructor() {
     super();
     this.state = {
       pengiriman: '',
-      daftar_nasabah: '',
-      jenis_sampah: '',
+      daftar_nasabah: 1,
+      jenis_sampah: 1,
       kg: '',
       total: 0,
       //   potongan: (this.state.total / 100) * 20,
@@ -89,113 +91,146 @@ export default class AddSampah extends Component {
           </TouchableWithoutFeedback>
           <Text> Tambah Data Sampah </Text>
         </View>
-        <View style={{padding: 10}}>
-          <View style={styles.viewContent}>
-            <Image
-              source={require('../../assets/user-outline.png')}
-              style={styles.imgIcon}
-            />
-            <View>
-              <Text style={{color: 'grey'}}>Daftar Request Nasabah</Text>
-              {this.state.daftar_nasabah == '' ? (
-                <ActivityIndicator size="small" color="green" />
-              ) : (
-                <Text style={{fontWeight: 'bold', fontSize: 17}}>
-                  Muhammad Radiant Fadilah
-                </Text>
-              )}
-            </View>
-          </View>
-          <View style={{margin: 5}}></View>
-          <View style={styles.viewContent}>
-            <Image
-              source={require('../../assets/recycle-picture.png')}
-              style={styles.imgIcon}
-            />
-            <View>
-              <Text style={{color: 'grey'}}>Jenis Sampah</Text>
-              {this.state.jenis_sampah == '' ? (
-                <ActivityIndicator size="small" color="green" />
-              ) : (
-                <Text style={{fontWeight: 'bold', fontSize: 17}}>Plastik</Text>
-              )}
-            </View>
-          </View>
-          <View style={{margin: 5}}></View>
-          <View style={styles.split}>
-            <View style={styles.viewContent2}>
+        <ScrollView>
+          <View style={{padding: 10}}>
+            <View style={styles.viewContent}>
               <Image
-                source={require('../../assets/kg.png')}
+                source={require('../../assets/user-outline.png')}
                 style={styles.imgIcon}
               />
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <TextInput
-                  keyboardType="number-pad"
-                  placeholder="Berat Sampah"
-                  style={{height: 40, marginRight: 5}}
-                  onChangeText={(input) => this.setState({total: input * 2000})}
+              <View style={{flex: 1}}>
+                <Text style={{color: 'grey'}}>Daftar Request Nasabah</Text>
+                {this.state.daftar_nasabah == '' ? (
+                  <ActivityIndicator size="small" color="green" />
+                ) : (
+                  <Picker
+                    style={{flex: 1}}
+                    mode="dropdown"
+                    selectedValue={this.state.daftar_nasabah}
+                    onValueChange={(value, index) =>
+                      this.setState({daftar_nasabah: value})
+                    }>
+                    <Picker.Item label="Muhammad Radiant Fadilah" value={1} />
+                    <Picker.Item label="Muhammad Rizqi" value={2} />
+                    <Picker.Item label="Muhammad Mujahid Muslim" value={3} />
+                  </Picker>
+                )}
+              </View>
+            </View>
+            <View style={{margin: 5}}></View>
+            <View
+              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              <View style={styles.viewContent4}>
+                <Image
+                  source={require('../../assets/recycle-picture.png')}
+                  style={styles.imgIcon}
                 />
-                <Text style={{fontWeight: 'bold'}}>KG</Text>
+                <View style={{flex: 1}}>
+                  <Text style={{color: 'grey'}}>Jenis Sampah</Text>
+                  {/* {this.state.jenis_sampah == '' ? ( */}
+                  {/* <ActivityIndicator size="small" color="green" /> */}
+                  {/* ) : ( */}
+                  <Picker
+                    style={{height: 40, width: '100%'}}
+                    mode="dropdown"
+                    selectedValue={this.state.jenis_sampah}
+                    onValueChange={(value, index) =>
+                      this.setState({jenis_sampah: value})
+                    }>
+                    <Picker.Item label="Organik" value={1} />
+                    <Picker.Item label="Anorganik" value={2} />
+                    <Picker.Item label="B4" value={3} />
+                  </Picker>
+                  {/* )} */}
+                </View>
+              </View>
+              <View style={styles.viewContent4}>
+                <View style={{flex: 1}}>
+                  <Text style={{color: 'grey'}}>Nama Sampah</Text>
+                  <TextInput placeholder="e.g Plastik" style={{height: 40}} />
+                </View>
               </View>
             </View>
-            {this.state.pengiriman == 1 ? (
-              <TouchableNativeFeedback
-                onPress={() => this.setState({pengiriman: 2})}>
-                <View style={styles.button1}>
-                  <Text style={styles.text}> Dijemput </Text>
+            <View style={{margin: 5}}></View>
+            <View style={styles.split}>
+              <View style={styles.viewContent2}>
+                <Image
+                  source={require('../../assets/kg.png')}
+                  style={styles.imgIcon}
+                />
+                <View
+                  style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
+                  <TextInput
+                    keyboardType="number-pad"
+                    placeholder="Berat Sampah"
+                    style={{height: 40, marginRight: 5}}
+                    onChangeText={(input) =>
+                      this.setState({total: input * 2000})
+                    }
+                  />
+                  <Text style={{fontWeight: 'bold'}}>KG</Text>
                 </View>
-              </TouchableNativeFeedback>
-            ) : (
-              <TouchableNativeFeedback
-                onPress={() => this.setState({pengiriman: 1})}>
-                <View style={styles.button2}>
-                  <Text style={styles.text}> Diantar </Text>
-                </View>
-              </TouchableNativeFeedback>
-            )}
-          </View>
-          <View style={{margin: 5}}></View>
-          <View style={styles.viewContent3}>
-            <View style={styles.viewText}>
-              <Text>Total Harga Sampah:</Text>
-              <Text style={{fontWeight: 'bold'}}>
-                Rp.{this.toPrice(this.state.total)},-
-              </Text>
-            </View>
-            {this.state.pengiriman == 1 ? (
-              <View style={styles.viewText}>
-                <Text> + Potongan Penjemputan 20%:</Text>
-                <Text style={{fontWeight: 'bold'}}>
-                  Rp.{this.toPrice((this.state.total / 100) * 20)},-
-                </Text>
               </View>
-            ) : (
-              <></>
-            )}
-            <View style={styles.viewText}>
-              <Text style={styles.textTotal}>Total Pemasukan:</Text>
               {this.state.pengiriman == 1 ? (
-                <Text style={styles.textTotal}>
-                  Rp.
-                  {this.toPrice(
-                    this.state.total - (this.state.total / 100) * 20,
-                  )}
-                  ,-
-                </Text>
+                <TouchableNativeFeedback
+                  onPress={() => this.setState({pengiriman: 2})}>
+                  <View style={styles.button1}>
+                    <Text style={styles.text}> Dijemput </Text>
+                  </View>
+                </TouchableNativeFeedback>
               ) : (
-                <Text style={styles.textTotal}>
-                  Rp.{this.toPrice(this.state.total)},-
-                </Text>
+                <TouchableNativeFeedback
+                  onPress={() => this.setState({pengiriman: 1})}>
+                  <View style={styles.button2}>
+                    <Text style={styles.text}> Diantar </Text>
+                  </View>
+                </TouchableNativeFeedback>
               )}
             </View>
-          </View>
-          <View style={{margin: 5}}></View>
-          <TouchableNativeFeedback>
-            <View style={styles.buttonSetor}>
-              <Text style={styles.text}>Setor Sampah</Text>
+            <View style={{margin: 5}}></View>
+            <View style={styles.viewContent3}>
+              <View style={styles.viewText}>
+                <Text>Total Harga Sampah:</Text>
+                <Text style={{fontWeight: 'bold'}}>
+                  Rp.{this.toPrice(this.state.total)},-
+                </Text>
+              </View>
+              {this.state.pengiriman == 1 ? (
+                <View style={styles.viewText}>
+                  <Text> + Potongan Penjemputan 20%:</Text>
+                  <Text style={{fontWeight: 'bold'}}>
+                    Rp.{this.toPrice((this.state.total / 100) * 20)},-
+                  </Text>
+                </View>
+              ) : (
+                <></>
+              )}
+              <View style={styles.viewText}>
+                <Text style={styles.textTotal}>Total Pemasukan:</Text>
+                {this.state.pengiriman == 1 ? (
+                  <Text style={styles.textTotal}>
+                    Rp.
+                    {this.toPrice(
+                      this.state.total - (this.state.total / 100) * 20,
+                    )}
+                    ,-
+                  </Text>
+                ) : (
+                  <Text style={styles.textTotal}>
+                    Rp.{this.toPrice(this.state.total)},-
+                  </Text>
+                )}
+              </View>
             </View>
-          </TouchableNativeFeedback>
-        </View>
+            <View style={{margin: 5}}></View>
+            <TouchableNativeFeedback
+              onPress={() => this.props.navigation.goBack()}>
+              <View style={styles.buttonSetor}>
+                <Text style={styles.text}>Setor Sampah</Text>
+              </View>
+            </TouchableNativeFeedback>
+          </View>
+        </ScrollView>
       </View>
     );
   }
@@ -229,13 +264,22 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     flexDirection: 'row',
     alignItems: 'center',
-    width: '60%',
+    width: '63%',
   },
   viewContent3: {
     backgroundColor: 'white',
     padding: 10,
     elevation: 2,
     borderRadius: 5,
+  },
+  viewContent4: {
+    backgroundColor: 'white',
+    padding: 10,
+    elevation: 2,
+    borderRadius: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '49%',
   },
   button1: {
     backgroundColor: '#1d8500d4',
