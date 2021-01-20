@@ -30,7 +30,7 @@ export default class ChatScreen extends Component {
           <Text> Nama Pengurus </Text>
         </View>
         <View style={styles.viewSend}>
-          <TextInput placeholder="Pesan" style={{width: '90%'}} />
+          <TextInput placeholder="Pesan" style={{flex: 1}} />
           <TouchableOpacity>
             <Image
               source={require('../assets/send-button.png')}
@@ -77,13 +77,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     position: 'absolute',
     bottom: 5,
-    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
     height: 45,
     borderRadius: 45 / 2,
     elevation: 5,
-    paddingLeft: 10,
+    paddingHorizontal: 10,
+    borderWidth: 0.5,
+    flex: 1,
+    width: '100%',
   },
   right: {
     backgroundColor: '#1d8500d4',
