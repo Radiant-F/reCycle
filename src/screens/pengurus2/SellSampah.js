@@ -110,7 +110,7 @@ export default class SellSampah extends Component {
                     borderBottomWidth: 1,
                   }}
                   value={this.state.stok_asli}
-                  onChangeText={(input) => this.stok(input)}
+                  onChangeText={(input) => this.setState({stok_asli: input})}
                 />
                 <Text style={{fontWeight: 'bold', fontSize: 25}}>KG</Text>
               </View>
@@ -124,7 +124,7 @@ export default class SellSampah extends Component {
             style={{...styles.viewContent, justifyContent: 'space-between'}}>
             <Text style={styles.textJual}>Total Penjualan</Text>
             <Text style={styles.textJual}>
-              Rp.{this.toPrice(this.state.stok_input * 2000)},-
+              Rp.{this.toPrice(this.state.stok_asli * 2000)},-
             </Text>
           </View>
           <View style={{margin: 5}}></View>
