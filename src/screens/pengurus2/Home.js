@@ -120,7 +120,9 @@ export default class Home extends Component {
                 <View style={styles.viewMoney}>
                   <View>
                     <Text style={{color: 'white'}}>Saldo Bank:</Text>
-                    <Text style={styles.textMoney}>Rp. {this.toPrice()},-</Text>
+                    <Text style={styles.textMoney}>
+                      Rp. {this.toPrice(10000)},-
+                    </Text>
                   </View>
                 </View>
                 <View style={styles.content}>
@@ -245,7 +247,7 @@ export default class Home extends Component {
                                       Total Pemasukan
                                     </Text>
                                     <Text style={styles.texType}>
-                                      Rp. {this.toPrice(90000)},-
+                                      Rp. {this.toPrice(10000)},-
                                     </Text>
                                   </View>
                                 </View>
