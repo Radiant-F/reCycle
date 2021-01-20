@@ -12,6 +12,7 @@ import {
   Alert,
   ActivityIndicator,
   RefreshControl,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -273,7 +274,7 @@ class Home extends Component {
                                         ) : (
                                           <>
                                             {this.state.status == 1 ? (
-                                              <>
+                                              <Image>
                                                 <Image
                                                   source={require('../../assets/icons8-large-courier-truck-64.png')}
                                                   style={styles.imgMap}
@@ -281,7 +282,7 @@ class Home extends Component {
                                                 <Text style={styles.textStatus}>
                                                   Sedang Dijemput..
                                                 </Text>
-                                              </>
+                                              </Image>
                                             ) : (
                                               <>
                                                 <Image
@@ -314,7 +315,12 @@ class Home extends Component {
                                           <Text>BPK Blok G 21/23</Text>
                                         </View>
                                       </View>
-                                      <TouchableNativeFeedback>
+                                      <TouchableNativeFeedback
+                                        onPress={() =>
+                                          this.props.navigation.navigate(
+                                            'ChatScreen',
+                                          )
+                                        }>
                                         <View style={styles.viewChat}>
                                           <Image
                                             source={require('../../assets/chat-bubbles.png')}
@@ -338,6 +344,7 @@ class Home extends Component {
                     </View>
                   )}
                 </View>
+                <View style={{marginBottom: 60}}></View>
               </ScrollView>
             </View>
           </ImageBackground>
