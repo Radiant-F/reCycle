@@ -1,4 +1,4 @@
-function reducer(state = {token: ''}, action) {
+function reducer(state = {token: '', nomer: '', alamat: ''}, action) {
   switch (action.type) {
     case 'CHANGE USER':
       return {...state, ...action.payload};
