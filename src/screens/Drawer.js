@@ -1,40 +1,32 @@
-import AsyncStorage from '@react-native-community/async-storage';
 import React, {Component} from 'react';
 import DrawerNasabah from './nasabah/Drawer';
 import DrawerPengurus1 from './pengurus1/Drawer';
 import DrawerPengurus2 from './pengurus2/Drawer';
-import {
-  ActivityIndicator,
-  Alert,
-  StyleSheet,
-  Text,
-  TouchableNativeFeedback,
-  View,
-} from 'react-native';
+import {connect} from 'react-redux';
+import {ActivityIndicator, Alert, View} from 'react-native';
 
-export default class Drawer extends Component {
-  constructor() {
-    super();
+class Drawer extends Component {
+  constructor(props) {
+    super(props);
     this.state = {
       role: '',
-      token: '',
+      token: this.token(),
     };
   }
 
-  componentDidMount() {
-    AsyncStorage.getItem('token')
-      .then((value) => {
-        if (value != null) {
-          this.setState({token: value});
-          this.getRole();
-        } else {
-          console.log('token tidak tersedia.');
-        }
-      })
-      .catch((err) => console.log(err));
+  token() {
+    if (this.props.user.token) {
+      console.log('token redux ', this.props.user.token);
+      return this.props.user.token;
+    }
+    return '';
   }
 
-  getRole() {
+  componentDidMount() {
+    this.getUser();
+  }
+
+  getUser() {
     console.log('mengambil role user..');
     fetch('http://mini-project-e.herokuapp.com/api/user', {
       method: 'GET',
@@ -46,6 +38,12 @@ export default class Drawer extends Component {
       .then((response) => response.json())
       .then((responseJSON) => {
         if (responseJSON.user.role != null) {
+          this.props.changeUser({
+            nomer: responseJSON.user.nomer,
+            alamat: responseJSON.user.alamat,
+            name: responseJSON.user.name,
+            avatar: responseJSON.user.avatar,
+          });
           this.setState({role: responseJSON.user.role});
           console.log('role yg sedang masuk: ', this.state.role);
         } else {
@@ -88,3 +86,17 @@ export default class Drawer extends Component {
     );
   }
 }
+
+const MapStateToProps = (state) => {
+  return {
+    user: state,
+  };
+};
+
+const MapDispatchToProps = (dispatch) => {
+  return {
+    changeUser: (input) => dispatch({type: 'CHANGE USER', payload: input}),
+  };
+};
+
+export default connect(MapStateToProps, MapDispatchToProps)(Drawer);
