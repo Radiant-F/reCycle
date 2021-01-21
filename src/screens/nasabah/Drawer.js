@@ -103,11 +103,7 @@ export default class Drawer extends Component {
                   <Text style={styles.textUser}>{this.state.user.name}</Text>
                 </View>
                 <TouchableNativeFeedback
-                  onPress={() =>
-                    this.props.navigation.navigate('ProfileEdit', {
-                      user: this.state.user,
-                    })
-                  }>
+                  onPress={() => this.props.navigation.navigate('ProfileEdit')}>
                   <View style={styles.subViewProfile}>
                     <Image
                       source={require('../../assets/settings-cogwheel-button.png')}
