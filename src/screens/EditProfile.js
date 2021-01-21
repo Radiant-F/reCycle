@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-community/async-storage';
 import ImagePicker from 'react-native-image-picker';
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
 import {
   ActivityIndicator,
   Alert,
@@ -14,15 +15,15 @@ import {
   View,
 } from 'react-native';
 
-export default class ProfileEdit extends Component {
-  constructor() {
-    super();
+class ProfileEdit extends Component {
+  constructor(props) {
+    super(props);
     this.state = {
       token: '',
-      name: '',
-      alamat: '',
-      nomer: '',
-      avatar: '',
+      name: this.getUserRedux('name'),
+      alamat: this.getUserRedux('alamat'),
+      nomer: this.getUserRedux(),
+      avatar: this.getUserRedux('avatar'),
       photo: '',
       email: '',
       id: '',
@@ -30,6 +31,23 @@ export default class ProfileEdit extends Component {
       loading: false,
       edited: false,
     };
+  }
+
+  getUserRedux(option) {
+    if (option == 'name') {
+      if (this.props.user.name) {
+        return this.props.user.name;
+      }
+    } else if (option == 'alamat') {
+      if (this.props.user.alamat) {
+        return this.props.user.alamat;
+      }
+    } else if (option == 'avatar') {
+      if (this.props.user.avatar) {
+        return this.props.user.avatar;
+      }
+    }
+    return this.props.user.nomer;
   }
 
   componentDidMount() {
@@ -42,18 +60,10 @@ export default class ProfileEdit extends Component {
         }
       })
       .catch((err) => console.log('kesalahan async storage. ', err));
-    this.setState({
-      name: this.props.route.params.user.name,
-      alamat: this.props.route.params.user.alamat,
-      nomer: this.props.route.params.user.nomer,
-      avatar: this.props.route.params.user.avatar,
-      email: this.props.route.params.user.email,
-      id: this.props.route.params.user.id,
-    });
   }
 
   updateUser() {
-    if (this.state.edited) {
+    if (this.state.edited == false && this.state.email == '') {
       const {name, alamat, nomer, photo, email} = this.state;
       if (photo.name === undefined) {
         const kirimData = {
@@ -117,6 +127,7 @@ export default class ProfileEdit extends Component {
             alamat: responseJSON.user.alamat,
             email: responseJSON.user.email,
           });
+
           console.log('berhasil.');
         } else {
           console.log('gagal mengambil user.');
@@ -158,7 +169,11 @@ export default class ProfileEdit extends Component {
   }
 
   alert2() {
-    Alert.alert('', 'Setidaknya gambar harus dirubah.', [{text: 'Ok'}]);
+    Alert.alert(
+      '',
+      'Setidaknya gambar harus dirubah dan isi email untuk verifikasi.',
+      [{text: 'Ok'}],
+    );
   }
 
   render() {
@@ -324,3 +339,17 @@ const styles = StyleSheet.create({
     },
   },
 });
+
+const MapStateToProps = (state) => {
+  return {
+    user: state,
+  };
+};
+
+const MapDispatchToProps = (dispatch) => {
+  return {
+    changeUser: (input) => dispatch({type: 'CHANGE USER', payload: input}),
+  };
+};
+
+export default connect(MapStateToProps, MapDispatchToProps)(ProfileEdit);
