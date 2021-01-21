@@ -21,10 +21,10 @@ class Request extends Component {
     super(props);
     this.state = {
       name: '',
-      nomer: '',
-      alamat: '',
+      nomer: this.getUserRequires('nomer'),
+      alamat: this.getUserRequires('alamat'),
       keterangan: '',
-      token: '',
+      token: this.getUserRequires(),
       user: '',
       lokasi: '',
       id: '',
@@ -34,21 +34,14 @@ class Request extends Component {
     };
   }
 
-  getToken() {
-    if (this.props.user.token) {
+  getUserRequires(option) {
+    if (option == 'nomer') {
+      return this.props.user.nomer;
+    } else if (option == 'alamat') {
+      return this.props.user.alamat;
+    } else {
       return this.props.user.token;
     }
-    return '';
-  }
-
-  componentDidMount() {
-    AsyncStorage.getItem('token')
-      .then((value) => {
-        this.setState({token: value});
-        console.log(value);
-        this.getUser();
-      })
-      .catch((err) => console.log(err));
   }
 
   getLocation() {
@@ -100,8 +93,6 @@ class Request extends Component {
       .then((responseJSON) => {
         this.setState({
           user: responseJSON.user,
-          nomer: responseJSON.user.nomer,
-          alamat: responseJSON.user.alamat,
           id: responseJSON.user.id,
         });
         console.log('user id: ', this.state.id);
@@ -175,6 +166,7 @@ class Request extends Component {
   }
 
   render() {
+    console.log(this.state.alamat);
     return (
       <View style={{flex: 1}}>
         <View style={styles.headerView}>
