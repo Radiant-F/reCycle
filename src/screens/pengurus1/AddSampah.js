@@ -121,15 +121,24 @@ export default class AddSampah extends Component {
             <View
               style={{flexDirection: 'row', justifyContent: 'space-between'}}>
               <View style={styles.viewContent4}>
-                <Image
-                  source={require('../../assets/recycle-picture.png')}
-                  style={styles.imgIcon}
-                />
+                {this.state.jenis_sampah == 1 ? (
+                  <Image
+                    source={require('../../assets/recycle-picture.png')}
+                    style={{...styles.imgIcon, tintColor: 'green'}}
+                  />
+                ) : this.state.jenis_sampah == 2 ? (
+                  <Image
+                    source={require('../../assets/recycle-picture.png')}
+                    style={{...styles.imgIcon, tintColor: 'orange'}}
+                  />
+                ) : (
+                  <Image
+                    source={require('../../assets/recycle-picture.png')}
+                    style={{...styles.imgIcon, tintColor: 'red'}}
+                  />
+                )}
                 <View style={{flex: 1}}>
                   <Text style={{color: 'grey'}}>Jenis Sampah</Text>
-                  {/* {this.state.jenis_sampah == '' ? ( */}
-                  {/* <ActivityIndicator size="small" color="green" /> */}
-                  {/* ) : ( */}
                   <Picker
                     style={{height: 40, width: '100%'}}
                     mode="dropdown"
@@ -141,7 +150,6 @@ export default class AddSampah extends Component {
                     <Picker.Item label="Anorganik" value={2} />
                     <Picker.Item label="B4" value={3} />
                   </Picker>
-                  {/* )} */}
                 </View>
               </View>
               <View style={styles.viewContent4}>
