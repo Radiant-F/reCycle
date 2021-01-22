@@ -44,6 +44,10 @@ class Request extends Component {
     }
   }
 
+  componentDidMount() {
+    this.getLocation();
+  }
+
   getLocation() {
     Geolocation.getCurrentPosition(
       (position) => {
@@ -162,11 +166,9 @@ class Request extends Component {
     console.log(err);
     Alert.alert('Terjadi Kesalahan', 'Periksa koneksi Anda.', [{text: 'Ok'}]);
     this.setState({loading: false});
-    // this.getLocation();
   }
 
   render() {
-    console.log(this.state.alamat);
     return (
       <View style={{flex: 1}}>
         <View style={styles.headerView}>
