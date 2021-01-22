@@ -88,7 +88,7 @@ export default class Drawer extends Component {
               />
               {this.state.user.avatar == null ? (
                 <Image
-                  source={require('../../assets/testPict.png')}
+                  source={require('../../assets/noimage.jpg')}
                   style={styles.pp}
                 />
               ) : (
