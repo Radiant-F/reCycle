@@ -27,7 +27,7 @@ export default class ChatScreen extends Component {
               style={styles.headerIcon}
             />
           </TouchableOpacity>
-          <Text> Nama Pengurus </Text>
+          <Text>Abang Ganteng</Text>
         </View>
         <View style={styles.viewSend}>
           <TextInput placeholder="Pesan" style={{flex: 1}} />
