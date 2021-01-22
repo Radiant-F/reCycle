@@ -77,7 +77,6 @@ class Home extends Component {
   }
 
   render() {
-    console.log(this.state.konten);
     return (
       <View style={{flex: 1}}>
         <View style={styles.header}>
