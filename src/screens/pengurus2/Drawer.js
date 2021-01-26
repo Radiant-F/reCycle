@@ -1,58 +1,15 @@
 import AsyncStorage from '@react-native-community/async-storage';
 import React, {Component} from 'react';
 import {
-  ActivityIndicator,
   StyleSheet,
   Text,
   View,
   TouchableNativeFeedback,
   Image,
   Alert,
-  ScrollView,
-  RefreshControl,
 } from 'react-native';
 
 export default class Drawer extends Component {
-  constructor() {
-    super();
-    this.state = {
-      token: '',
-      user: '',
-      refresh: false,
-    };
-  }
-
-  componentDidMount() {
-    AsyncStorage.getItem('token')
-      .then((value) => {
-        if (value != null) {
-          this.setState({token: value});
-          this.getUser();
-        } else {
-          console.log('token tidak tersedia.');
-        }
-      })
-      .catch((err) => console.log(err));
-  }
-
-  getUser() {
-    console.log('mengambil data user..');
-    fetch('http://mini-project-e.herokuapp.com/api/user', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.state.token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((responseJSON) => {
-        this.setState({refresh: false});
-        this.setState({user: responseJSON.user});
-        console.log(this.state.user);
-      })
-      .catch((err) => console.log(err));
-  }
-
   logout() {
     console.log('dadah.');
     AsyncStorage.removeItem('token');
@@ -70,70 +27,43 @@ export default class Drawer extends Component {
   render() {
     return (
       <View style={{flex: 1}}>
-        {this.state.user == '' ? (
-          <View
-            style={{alignSelf: 'center', flex: 1, justifyContent: 'center'}}>
-            <ActivityIndicator color="green" size="large" />
+        <View>
+          <Image
+            source={require('../../assets/block-recycle-reduce-reuse-logo-wallpapers.jpeg')}
+            style={styles.ppCover}
+          />
+          <View style={styles.pp}>
+            <Image
+              source={require('../../assets/iconPengurus.png')}
+              style={{width: 80, height: 80}}
+            />
           </View>
-        ) : (
-          <ScrollView
-            refreshControl={
-              <RefreshControl
-                refreshing={this.state.refresh}
-                onRefresh={() => {
-                  this.setState({refresh: true});
-                  this.getUser();
-                }}
-              />
-            }>
-            <View>
-              <Image
-                source={require('../../assets/block-recycle-reduce-reuse-logo-wallpapers.jpeg')}
-                style={styles.ppCover}
-              />
-              {this.state.user.avatar == '' ? (
-                <Image
-                  source={require('../../assets/testPict.png')}
-                  style={styles.pp}
-                />
-              ) : (
-                <Image
-                  source={{uri: this.state.user.avatar}}
-                  style={styles.pp}
-                />
-              )}
-              <View style={styles.viewProfile}>
-                <View style={styles.viewTextUser}>
-                  <Text style={{color: 'grey'}}>Selamat datang,</Text>
-                  <Text style={styles.textUser}>{this.state.user.name}</Text>
-                </View>
-                <TouchableNativeFeedback
-                  onPress={() =>
-                    this.props.navigation.navigate('ProfileEdit', {
-                      user: this.state.user,
-                    })
-                  }>
-                  <View style={styles.subViewProfile}>
-                    <Image
-                      source={require('../../assets/settings-cogwheel-button.png')}
-                      style={styles.iconProfile}
-                    />
-                    <Text>Pengaturan</Text>
-                  </View>
-                </TouchableNativeFeedback>
-                <TouchableNativeFeedback onPress={() => this.confirmLogout()}>
-                  <View style={styles.subViewProfile}>
-                    <Image
-                      source={require('../../assets/change-power-options.png')}
-                      style={styles.iconProfile}
-                    />
-                    <Text>Keluar</Text>
-                  </View>
-                </TouchableNativeFeedback>
-              </View>
+          <View style={styles.viewProfile}>
+            <View style={styles.viewTextUser}>
+              <Text style={{color: 'grey'}}>Selamat datang,</Text>
+              <Text style={styles.textUser}>Penjual</Text>
             </View>
-          </ScrollView>
-        )}
+            <TouchableNativeFeedback
+              onPress={() => this.props.navigation.navigate('ProfileEdit')}>
+              <View style={styles.subViewProfile}>
+                <Image
+                  source={require('../../assets/settings-cogwheel-button.png')}
+                  style={styles.iconProfile}
+                />
+                <Text>Pengaturan</Text>
+              </View>
+            </TouchableNativeFeedback>
+            <TouchableNativeFeedback onPress={() => this.confirmLogout()}>
+              <View style={styles.subViewProfile}>
+                <Image
+                  source={require('../../assets/change-power-options.png')}
+                  style={styles.iconProfile}
+                />
+                <Text>Keluar</Text>
+              </View>
+            </TouchableNativeFeedback>
+          </View>
+        </View>
       </View>
     );
   }
@@ -164,6 +94,8 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     marginTop: -45,
     alignSelf: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
   },
   ppCover: {
     width: '100%',
