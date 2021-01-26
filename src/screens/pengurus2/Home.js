@@ -35,7 +35,6 @@ export default class Home extends Component {
   componentDidMount() {
     AsyncStorage.getItem('token')
       .then((value) => {
-        console.log('token tersedia.');
         this.setState({token: value});
         this.changeStateA();
       })
