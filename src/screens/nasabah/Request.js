@@ -1,8 +1,7 @@
-import AsyncStorage from '@react-native-community/async-storage';
 import React, {Component} from 'react';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import {connect} from 'react-redux';
-import Geolocation from 'react-native-geolocation-service';
+import Geolocation from '@react-native-community/geolocation';
 import {
   Alert,
   Image,
@@ -13,8 +12,10 @@ import {
   ScrollView,
   ActivityIndicator,
   Switch,
+  TextInput,
+  TouchableNativeFeedback,
+  PermissionsAndroid,
 } from 'react-native';
-import {TextInput, TouchableNativeFeedback} from 'react-native-gesture-handler';
 
 class Request extends Component {
   constructor(props) {
@@ -27,7 +28,7 @@ class Request extends Component {
       token: this.getUserRequires(),
       user: '',
       lokasi: '',
-      id: '',
+      id: this.getUserRequires('id'),
       nama_lokasi: '',
       loading: false,
       switch: false,
@@ -39,14 +40,42 @@ class Request extends Component {
       return this.props.user.nomer;
     } else if (option == 'alamat') {
       return this.props.user.alamat;
+    } else if (option == 'id') {
+      return this.props.user.id;
     } else {
       return this.props.user.token;
     }
   }
 
-  componentDidMount() {
-    this.getLocation();
+  switchController() {
+    this.setState({switch: !this.state.switch});
+    this.requestGPSPermission();
   }
+
+  requestGPSPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: 'Akses Ijin Lokasi',
+          message:
+            'Kami membutuhkan akses lokasi anda, ' +
+            'agar kami bisa menentukan lokasi.',
+          buttonNeutral: 'Nanti Saja',
+          buttonNegative: 'Batal',
+          buttonPositive: 'OKE',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('Permission granted');
+        this.getLocation();
+      } else {
+        console.log('Permission denied');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
 
   getLocation() {
     Geolocation.getCurrentPosition(
@@ -59,7 +88,7 @@ class Request extends Component {
       (error) => {
         console.log(error.code, error.message);
       },
-      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+      {enableHighAccuracy: true},
     );
   }
 
@@ -151,9 +180,14 @@ class Request extends Component {
   }
 
   alert() {
-    Alert.alert('Berhasil', 'Request berhasil dikirim.', [{text: 'Ok'}], {
-      cancelable: false,
-    });
+    Alert.alert(
+      'Berhasil',
+      'Request berhasil dikirim. Harap periksa status.',
+      [{text: 'Ok'}],
+      {
+        cancelable: false,
+      },
+    );
   }
 
   alert2() {
@@ -244,8 +278,7 @@ class Request extends Component {
               </View>
             </View>
             <View style={{margin: 2}}></View>
-            <TouchableNativeFeedback
-              onPress={() => this.setState({switch: !this.state.switch})}>
+            <TouchableNativeFeedback onPress={() => this.switchController()}>
               <View
                 style={{
                   ...styles.viewContent,
@@ -256,9 +289,7 @@ class Request extends Component {
                 <Switch
                   value={this.state.switch}
                   thumbColor={this.state.switch ? '#1d8500d4' : '#854700d4'}
-                  onValueChange={() =>
-                    this.setState({switch: !this.state.switch})
-                  }
+                  onValueChange={() => this.switchController()}
                 />
               </View>
             </TouchableNativeFeedback>
