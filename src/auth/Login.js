@@ -231,6 +231,7 @@ const styles = StyleSheet.create({
     padding: 10,
     width: 200,
     marginTop: 10,
+    height: 40,
   },
   viewRegister: {
     backgroundColor: '#854700d4',
