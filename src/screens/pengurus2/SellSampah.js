@@ -3,6 +3,7 @@ import _ from 'lodash';
 import {
   ActivityIndicator,
   Image,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -64,77 +65,82 @@ export default class SellSampah extends Component {
           </TouchableWithoutFeedback>
           <Text>Penjualan</Text>
         </View>
-        <View style={{padding: 10}}>
-          <View style={styles.viewContent}>
-            <Image
-              source={require('../../assets/connection-indicator.png')}
-              style={styles.imgIcon}
-            />
-            <View>
-              <Text style={{color: 'grey'}}>Tanggal</Text>
-              <View style={styles.viewInput}>
-                <TextInput placeholder="21 Januari 2021" style={{height: 40}} />
+        <ScrollView>
+          <View style={{padding: 10}}>
+            <View style={styles.viewContent}>
+              <Image
+                source={require('../../assets/connection-indicator.png')}
+                style={styles.imgIcon}
+              />
+              <View>
+                <Text style={{color: 'grey'}}>Tanggal</Text>
+                <View style={styles.viewInput}>
+                  <TextInput
+                    placeholder="21 Januari 2021"
+                    style={{height: 40}}
+                  />
+                </View>
               </View>
             </View>
-          </View>
-          <View style={{margin: 5}}></View>
-          <View style={styles.viewContent}>
-            <Image
-              source={require('../../assets/recycle-picture.png')}
-              style={styles.imgIcon}
-            />
-            <View>
-              <Text style={{color: 'grey'}}>Jenis Sampah</Text>
-              {this.state.jenis == '' ? (
-                <ActivityIndicator size="small" color="green" />
-              ) : (
-                <Text style={styles.textJual}>{this.state.jenis}</Text>
-              )}
-            </View>
-          </View>
-          <View style={{margin: 5}}></View>
-          <View style={styles.viewContent}>
-            <Image
-              source={require('../../assets/kg.png')}
-              style={styles.imgIcon}
-            />
-            <View>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <TextInput
-                  placeholder="Berat Sampah"
-                  placeholderTextColor="white"
-                  keyboardType="decimal-pad"
-                  style={{
-                    ...styles.textJual,
-                    width: '65%',
-                    borderBottomWidth: 1,
-                  }}
-                  value={this.state.stok_asli}
-                  onChangeText={(input) => this.setState({stok_asli: input})}
-                />
-                <Text style={{fontWeight: 'bold', fontSize: 25}}>KG</Text>
+            <View style={{margin: 5}}></View>
+            <View style={styles.viewContent}>
+              <Image
+                source={require('../../assets/recycle-picture.png')}
+                style={styles.imgIcon}
+              />
+              <View>
+                <Text style={{color: 'grey'}}>Jenis Sampah</Text>
+                {this.state.jenis == '' ? (
+                  <ActivityIndicator size="small" color="green" />
+                ) : (
+                  <Text style={styles.textJual}>{this.state.jenis}</Text>
+                )}
               </View>
-              <Text style={{color: 'grey'}}>
-                Harga per-KG: <Text style={{color: 'black'}}>Rp.2000,-</Text>
+            </View>
+            <View style={{margin: 5}}></View>
+            <View style={styles.viewContent}>
+              <Image
+                source={require('../../assets/kg.png')}
+                style={styles.imgIcon}
+              />
+              <View>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <TextInput
+                    placeholder="Berat Sampah"
+                    placeholderTextColor="white"
+                    keyboardType="decimal-pad"
+                    style={{
+                      ...styles.textJual,
+                      width: '65%',
+                      borderBottomWidth: 1,
+                    }}
+                    value={this.state.stok_asli}
+                    onChangeText={(input) => this.setState({stok_asli: input})}
+                  />
+                  <Text style={{fontWeight: 'bold', fontSize: 25}}>KG</Text>
+                </View>
+                <Text style={{color: 'grey'}}>
+                  Harga per-KG: <Text style={{color: 'black'}}>Rp.2000,-</Text>
+                </Text>
+              </View>
+            </View>
+            <View style={{margin: 5}}></View>
+            <View
+              style={{...styles.viewContent, justifyContent: 'space-between'}}>
+              <Text style={styles.textJual}>Total Penjualan</Text>
+              <Text style={styles.textJual}>
+                Rp.{this.toPrice(this.state.stok_asli * 2000)},-
               </Text>
             </View>
+            <View style={{margin: 5}}></View>
+            <TouchableNativeFeedback
+              onPress={() => this.props.navigation.goBack()}>
+              <View style={styles.viewButton}>
+                <Text style={styles.textButton}>Jual</Text>
+              </View>
+            </TouchableNativeFeedback>
           </View>
-          <View style={{margin: 5}}></View>
-          <View
-            style={{...styles.viewContent, justifyContent: 'space-between'}}>
-            <Text style={styles.textJual}>Total Penjualan</Text>
-            <Text style={styles.textJual}>
-              Rp.{this.toPrice(this.state.stok_asli * 2000)},-
-            </Text>
-          </View>
-          <View style={{margin: 5}}></View>
-          <TouchableNativeFeedback
-            onPress={() => this.props.navigation.goBack()}>
-            <View style={styles.viewButton}>
-              <Text style={styles.textButton}>Jual</Text>
-            </View>
-          </TouchableNativeFeedback>
-        </View>
+        </ScrollView>
       </View>
     );
   }
