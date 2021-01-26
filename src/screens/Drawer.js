@@ -27,7 +27,7 @@ class Drawer extends Component {
   }
 
   getUser() {
-    console.log('mengambil role user..');
+    console.log('mengambil data user..');
     fetch('http://mini-project-e.herokuapp.com/api/user', {
       method: 'GET',
       headers: {
@@ -43,11 +43,12 @@ class Drawer extends Component {
             alamat: responseJSON.user.alamat,
             name: responseJSON.user.name,
             avatar: responseJSON.user.avatar,
+            id: responseJSON.user.id,
           });
           this.setState({role: responseJSON.user.role});
-          console.log('role yg sedang masuk: ', this.state.role);
+          console.log('selesai.');
         } else {
-          console.log('gagal mengambil role user.');
+          console.log('request time out.');
         }
       })
       .catch((err) => console.log(err));
