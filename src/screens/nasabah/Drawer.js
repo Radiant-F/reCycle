@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-community/async-storage';
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
 import {
   ActivityIndicator,
   StyleSheet,
@@ -8,44 +9,25 @@ import {
   TouchableNativeFeedback,
   Image,
   Alert,
-  ScrollView,
-  RefreshControl,
 } from 'react-native';
 
-export default class Drawer extends Component {
-  constructor() {
-    super();
+class Drawer extends Component {
+  constructor(props) {
+    super(props);
     this.state = {
-      token: '',
-      user: '',
-      refresh: false,
+      name: this.getUserInfo('name'),
+      avatar: this.getUserInfo(),
     };
   }
 
-  componentDidMount() {
-    AsyncStorage.getItem('token')
-      .then((value) => {
-        this.setState({token: value});
-        this.getUser();
-      })
-      .catch((err) => console.log(err));
-  }
-
-  getUser() {
-    console.log('mengambil data user..');
-    fetch('http://mini-project-e.herokuapp.com/api/user', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.state.token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((responseJSON) => {
-        this.setState({user: responseJSON.user, refresh: false});
-        console.log(this.state.user);
-      })
-      .catch((err) => console.log('terjadi kesalahan. ', err));
+  getUserInfo(option) {
+    if (option == 'name') {
+      if (this.props.user.name) {
+        return this.props.user.name;
+      }
+    } else {
+      return this.props.user.avatar;
+    }
   }
 
   logout() {
@@ -65,65 +47,51 @@ export default class Drawer extends Component {
   render() {
     return (
       <View style={{flex: 1}}>
-        {this.state.user == '' ? (
+        {this.state.name == '' ? (
           <View
             style={{alignSelf: 'center', flex: 1, justifyContent: 'center'}}>
             <ActivityIndicator color="green" size="large" />
           </View>
         ) : (
-          <ScrollView
-            refreshControl={
-              <RefreshControl
-                refreshing={this.state.refresh}
-                onRefresh={() => {
-                  this.setState({refresh: true});
-                  this.getUser();
-                }}
-              />
-            }>
-            <View>
+          <View>
+            <Image
+              source={require('../../assets/block-recycle-reduce-reuse-logo-wallpapers.jpeg')}
+              style={styles.ppCover}
+            />
+            {this.state.avatar == null ? (
               <Image
-                source={require('../../assets/block-recycle-reduce-reuse-logo-wallpapers.jpeg')}
-                style={styles.ppCover}
+                source={require('../../assets/noimage.jpg')}
+                style={styles.pp}
               />
-              {this.state.user.avatar == null ? (
-                <Image
-                  source={require('../../assets/noimage.jpg')}
-                  style={styles.pp}
-                />
-              ) : (
-                <Image
-                  source={{uri: this.state.user.avatar}}
-                  style={styles.pp}
-                />
-              )}
-              <View style={styles.viewProfile}>
-                <View style={styles.viewTextUser}>
-                  <Text style={{color: 'grey'}}>Selamat datang,</Text>
-                  <Text style={styles.textUser}>{this.state.user.name}</Text>
-                </View>
-                <TouchableNativeFeedback
-                  onPress={() => this.props.navigation.navigate('ProfileEdit')}>
-                  <View style={styles.subViewProfile}>
-                    <Image
-                      source={require('../../assets/settings-cogwheel-button.png')}
-                      style={styles.iconProfile}
-                    />
-                    <Text>Pengaturan</Text>
-                  </View>
-                </TouchableNativeFeedback>
-                <TouchableNativeFeedback onPress={() => this.confirmLogout()}>
-                  <View style={styles.subViewProfile}>
-                    <Image
-                      source={require('../../assets/change-power-options.png')}
-                      style={styles.iconProfile}
-                    />
-                    <Text>Keluar</Text>
-                  </View>
-                </TouchableNativeFeedback>
+            ) : (
+              <Image source={{uri: this.state.avatar}} style={styles.pp} />
+            )}
+            <View style={styles.viewProfile}>
+              <View style={styles.viewTextUser}>
+                <Text style={{color: 'grey'}}>Selamat datang,</Text>
+                <Text style={styles.textUser}>{this.state.name}</Text>
               </View>
+              <TouchableNativeFeedback
+                onPress={() => this.props.navigation.navigate('ProfileEdit')}>
+                <View style={styles.subViewProfile}>
+                  <Image
+                    source={require('../../assets/settings-cogwheel-button.png')}
+                    style={styles.iconProfile}
+                  />
+                  <Text>Pengaturan</Text>
+                </View>
+              </TouchableNativeFeedback>
+              <TouchableNativeFeedback onPress={() => this.confirmLogout()}>
+                <View style={styles.subViewProfile}>
+                  <Image
+                    source={require('../../assets/change-power-options.png')}
+                    style={styles.iconProfile}
+                  />
+                  <Text>Keluar</Text>
+                </View>
+              </TouchableNativeFeedback>
             </View>
-          </ScrollView>
+          </View>
         )}
       </View>
     );
@@ -193,3 +161,17 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
 });
+
+const MapStateToProps = (state) => {
+  return {
+    user: state,
+  };
+};
+
+const MapDispatchToProps = (dispatch) => {
+  return {
+    changeUser: (input) => dispatch({type: 'CHANGE USER', payload: input}),
+  };
+};
+
+export default connect(MapStateToProps, MapDispatchToProps)(Drawer);
