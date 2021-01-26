@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.12.1",
+    "@react-native-community/geolocation": "^2.0.2",
     "@react-native-community/masked-view": "^0.1.10",
     "@react-native-picker/picker": "^1.9.10",
     "@react-navigation/drawer": "^5.11.4",
@@ -20,7 +21,6 @@
     "lottie-react-native": "^3.5.0",
     "react": "16.13.1",
     "react-native": "0.63.4",
-    "react-native-geolocation-service": "^5.1.1",
     "react-native-gesture-handler": "^1.9.0",
     "react-native-image-picker": "^2.3.4",
     "react-native-maps": "0.27.1",
