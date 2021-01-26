@@ -19,14 +19,14 @@ class ProfileEdit extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      token: '',
+      token: this.getUserRedux('token'),
       name: this.getUserRedux('name'),
       alamat: this.getUserRedux('alamat'),
       nomer: this.getUserRedux(),
       avatar: this.getUserRedux('avatar'),
       photo: '',
       email: '',
-      id: '',
+      id: this.getUserRedux('id'),
       data: '',
       loading: false,
       edited: false,
@@ -46,24 +46,20 @@ class ProfileEdit extends Component {
       if (this.props.user.avatar) {
         return this.props.user.avatar;
       }
+    } else if (option == 'id') {
+      if (this.props.user.id) {
+        return this.props.user.id;
+      }
+    } else if (option == 'token') {
+      if (this.props.user.token) {
+        return this.props.user.token;
+      }
     }
     return this.props.user.nomer;
   }
 
-  componentDidMount() {
-    AsyncStorage.getItem('token')
-      .then((value) => {
-        if (value != null) {
-          this.setState({token: value});
-        } else {
-          console.log('tidak ada token');
-        }
-      })
-      .catch((err) => console.log('kesalahan async storage. ', err));
-  }
-
   updateUser() {
-    if (this.state.edited == false && this.state.email == '') {
+    if (this.state.email != '' && this.state.edited != false) {
       const {name, alamat, nomer, photo, email} = this.state;
       if (photo.name === undefined) {
         const kirimData = {
@@ -98,7 +94,7 @@ class ProfileEdit extends Component {
               this.alert();
             }
           })
-          .catch((err) => console.log('terjadi kesalahan. ', err));
+          .catch((err) => this.error(err));
       } else {
         this.alert2();
       }
@@ -121,19 +117,26 @@ class ProfileEdit extends Component {
         if (responseJSON.user.role != null) {
           this.setState({
             photo: '',
+            email: responseJSON.user.email,
+            edited: false,
+          });
+          this.props.changeUser({
             avatar: responseJSON.user.avatar,
             name: responseJSON.user.name,
             nomer: responseJSON.user.nomer,
             alamat: responseJSON.user.alamat,
-            email: responseJSON.user.email,
+            id: responseJSON.user.id,
           });
-
           console.log('berhasil.');
         } else {
           console.log('gagal mengambil user.');
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.warn('Terjadi Kesalahan. ', err);
+        ToastAndroid.show('Mohon periksa koneksi Anda.', ToastAndroid.SHORT);
+        this.setState({loading: false});
+      });
   }
 
   createFormData = (photo, body) => {
@@ -174,6 +177,12 @@ class ProfileEdit extends Component {
       'Setidaknya gambar harus dirubah dan isi email untuk verifikasi.',
       [{text: 'Ok'}],
     );
+  }
+
+  error(err) {
+    console.log('Terjadi Kesalahan. ', err);
+    ToastAndroid.show('Mohon periksa koneksi Anda.', ToastAndroid.SHORT);
+    this.setState({loading: false});
   }
 
   render() {
