@@ -24,14 +24,9 @@ export default class AddSampah extends Component {
       jenis_sampah: 1,
       kg: '',
       total: 0,
-      //   potongan: (this.state.total / 100) * 20,
       token: this.getToken(),
     };
   }
-
-  //   componentDidMount() {
-  //     this.getNasabah();
-  //   }
 
   toPrice(price) {
     return _.replace(price, /\B(?=(\d{3})+(?!\d))/g, '.');
