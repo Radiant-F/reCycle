@@ -9,24 +9,26 @@ import {
   TouchableNativeFeedback,
   Image,
   Alert,
+  ScrollView,
+  RefreshControl,
 } from 'react-native';
 
 class Drawer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: this.getUserInfo('name'),
-      avatar: this.getUserInfo(),
+      name: '',
+      avatar: '',
+      refresh: false,
     };
   }
 
-  getUserInfo(option) {
-    if (option == 'name') {
-      if (this.props.user.name) {
-        return this.props.user.name;
-      }
-    } else {
-      return this.props.user.avatar;
+  componentDidMount() {
+    if (this.props.user) {
+      return this.setState({
+        name: this.props.user.name,
+        avatar: this.props.user.avatar,
+      });
     }
   }
 
@@ -47,52 +49,60 @@ class Drawer extends Component {
   render() {
     return (
       <View style={{flex: 1}}>
-        {this.state.name == '' ? (
-          <View
-            style={{alignSelf: 'center', flex: 1, justifyContent: 'center'}}>
-            <ActivityIndicator color="green" size="large" />
-          </View>
-        ) : (
-          <View>
-            <Image
-              source={require('../../assets/block-recycle-reduce-reuse-logo-wallpapers.jpeg')}
-              style={styles.ppCover}
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refresh}
+              onRefresh={() => this.componentDidMount()}
             />
-            {this.state.avatar == null ? (
-              <Image
-                source={require('../../assets/noimage.jpg')}
-                style={styles.pp}
-              />
-            ) : (
-              <Image source={{uri: this.state.avatar}} style={styles.pp} />
-            )}
-            <View style={styles.viewProfile}>
-              <View style={styles.viewTextUser}>
-                <Text style={{color: 'grey'}}>Selamat datang,</Text>
-                <Text style={styles.textUser}>{this.state.name}</Text>
-              </View>
-              <TouchableNativeFeedback
-                onPress={() => this.props.navigation.navigate('ProfileEdit')}>
-                <View style={styles.subViewProfile}>
-                  <Image
-                    source={require('../../assets/settings-cogwheel-button.png')}
-                    style={styles.iconProfile}
-                  />
-                  <Text>Pengaturan</Text>
-                </View>
-              </TouchableNativeFeedback>
-              <TouchableNativeFeedback onPress={() => this.confirmLogout()}>
-                <View style={styles.subViewProfile}>
-                  <Image
-                    source={require('../../assets/change-power-options.png')}
-                    style={styles.iconProfile}
-                  />
-                  <Text>Keluar</Text>
-                </View>
-              </TouchableNativeFeedback>
+          }>
+          {this.state.avatar == '' ? (
+            <View
+              style={{alignSelf: 'center', flex: 1, justifyContent: 'center'}}>
+              <ActivityIndicator color="green" size="large" />
             </View>
-          </View>
-        )}
+          ) : (
+            <View>
+              <Image
+                source={require('../../assets/block-recycle-reduce-reuse-logo-wallpapers.jpeg')}
+                style={styles.ppCover}
+              />
+              {this.state.avatar == '' ? (
+                <Image
+                  source={require('../../assets/noimage.jpg')}
+                  style={styles.pp}
+                />
+              ) : (
+                <Image source={{uri: this.state.avatar}} style={styles.pp} />
+              )}
+              <View style={styles.viewProfile}>
+                <View style={styles.viewTextUser}>
+                  <Text style={{color: 'grey'}}>Selamat datang,</Text>
+                  <Text style={styles.textUser}>{this.state.name}</Text>
+                </View>
+                <TouchableNativeFeedback
+                  onPress={() => this.props.navigation.navigate('ProfileEdit')}>
+                  <View style={styles.subViewProfile}>
+                    <Image
+                      source={require('../../assets/settings-cogwheel-button.png')}
+                      style={styles.iconProfile}
+                    />
+                    <Text>Pengaturan</Text>
+                  </View>
+                </TouchableNativeFeedback>
+                <TouchableNativeFeedback onPress={() => this.confirmLogout()}>
+                  <View style={styles.subViewProfile}>
+                    <Image
+                      source={require('../../assets/change-power-options.png')}
+                      style={styles.iconProfile}
+                    />
+                    <Text>Keluar</Text>
+                  </View>
+                </TouchableNativeFeedback>
+              </View>
+            </View>
+          )}
+        </ScrollView>
       </View>
     );
   }
