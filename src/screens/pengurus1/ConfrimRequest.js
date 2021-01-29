@@ -1,6 +1,5 @@
 import AsyncStorage from '@react-native-community/async-storage';
 import React, {Component} from 'react';
-import Geolocation from 'react-native-geolocation-service';
 import {
   ActivityIndicator,
   Alert,
@@ -21,7 +20,6 @@ export default class ConfrimRequest extends Component {
       token: '',
       data: 'a',
       loading: true,
-      // lokasi: this.getLocation(),
       nama_lokasi: '',
     };
   }
