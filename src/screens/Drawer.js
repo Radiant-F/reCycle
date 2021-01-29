@@ -4,31 +4,29 @@ import DrawerPengurus1 from './pengurus1/Drawer';
 import DrawerPengurus2 from './pengurus2/Drawer';
 import {connect} from 'react-redux';
 import {ActivityIndicator, Alert, View} from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 
 class Drawer extends Component {
   constructor(props) {
     super(props);
     this.state = {
       role: '',
-      token: this.token(),
+      token: '',
     };
   }
 
-  token() {
-    if (this.props.user.token) {
-      console.log('token redux ', this.props.user.token);
-      return this.props.user.token;
-    }
-    return '';
-  }
-
   componentDidMount() {
-    this.getUser();
+    AsyncStorage.getItem('token')
+      .then((value) => {
+        this.setState({token: value});
+        this.getUser();
+      })
+      .catch((err) => console.log(err));
   }
 
   getUser() {
     console.log('mengambil data user..');
-    fetch('http://mini-project-e.herokuapp.com/api/user', {
+    fetch('https://mini-project-e.herokuapp.com/api/user', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -37,6 +35,7 @@ class Drawer extends Component {
     })
       .then((response) => response.json())
       .then((responseJSON) => {
+        console.log(responseJSON);
         if (responseJSON.user.role != null) {
           this.props.changeUser({
             nomer: responseJSON.user.nomer,
