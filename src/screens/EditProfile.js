@@ -24,7 +24,7 @@ class ProfileEdit extends Component {
       alamat: this.getUserRedux('alamat'),
       nomer: this.getUserRedux(),
       avatar: this.getUserRedux('avatar'),
-      photo: '',
+      photo: null,
       email: '',
       id: this.getUserRedux('id'),
       data: '',
@@ -71,7 +71,7 @@ class ProfileEdit extends Component {
         this.setState({loading: true});
         console.log('memperbarui user..');
         fetch(
-          `http://mini-project-e.herokuapp.com/api/user/update/${this.state.id}`,
+          `https://mini-project-e.herokuapp.com/api/user/update/${this.state.id}`,
           {
             method: 'POST',
             headers: {
@@ -83,12 +83,15 @@ class ProfileEdit extends Component {
           .then((response) => response.json())
           .then((responseJSON) => {
             if (responseJSON.status == 'success') {
-              this.setState({loading: false});
+              this.setState({
+                loading: false,
+                edited: false,
+              });
+              this.getUser();
               ToastAndroid.show(
                 'Profil telah Anda sunting',
                 ToastAndroid.SHORT,
               );
-              this.getUser();
             } else {
               this.setState({loading: false});
               this.alert();
@@ -105,7 +108,7 @@ class ProfileEdit extends Component {
 
   getUser() {
     console.log('mengambil user..');
-    fetch('http://mini-project-e.herokuapp.com/api/user', {
+    fetch('https://mini-project-e.herokuapp.com/api/user', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -114,18 +117,15 @@ class ProfileEdit extends Component {
     })
       .then((response) => response.json())
       .then((responseJSON) => {
+        console.log(responseJSON);
         if (responseJSON.user.role != null) {
-          this.setState({
-            photo: '',
-            email: responseJSON.user.email,
-            edited: false,
-          });
           this.props.changeUser({
             avatar: responseJSON.user.avatar,
             name: responseJSON.user.name,
             nomer: responseJSON.user.nomer,
             alamat: responseJSON.user.alamat,
             id: responseJSON.user.id,
+            email: responseJSON.user.email,
           });
           console.log('berhasil.');
         } else {
@@ -162,7 +162,7 @@ class ProfileEdit extends Component {
     ImagePicker.launchImageLibrary(options, (response) => {
       if (response.uri) {
         this.setState({photo: response, edited: true});
-        console.log(JSON.stringify(response));
+        console.log(JSON.stringify(response.fileName));
       }
     });
   };
@@ -201,14 +201,14 @@ class ProfileEdit extends Component {
         <View style={styles.viewProfile}>
           <View>
             <TouchableWithoutFeedback onPress={() => this.handleEditPhoto()}>
-              {this.state.photo != '' ? (
+              {this.state.photo == null ? (
                 <Image
-                  source={{uri: this.state.photo.uri}}
+                  source={{uri: this.state.avatar}}
                   style={styles.imgProfile}
                 />
               ) : (
                 <Image
-                  source={{uri: this.state.avatar}}
+                  source={{uri: this.state.photo.uri}}
                   style={styles.imgProfile}
                 />
               )}
