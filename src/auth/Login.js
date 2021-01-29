@@ -32,7 +32,7 @@ class Login extends Component {
       console.log('mencoba login..');
       const {email, password} = this.state;
       let kirimData = {email: email, password: password};
-      fetch('http://mini-project-e.herokuapp.com/api/login', {
+      fetch('https://mini-project-e.herokuapp.com/api/login', {
         method: 'POST',
         body: JSON.stringify(kirimData),
         headers: {

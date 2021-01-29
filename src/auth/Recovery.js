@@ -33,7 +33,7 @@ export default class Recovery extends Component {
       console.log('mencoba pemulihan..');
       const {email} = this.state;
       let kirimData = {email: email};
-      fetch('http://mini-project-e.herokuapp.com/api/forget', {
+      fetch('https://mini-project-e.herokuapp.com/api/forget', {
         method: 'GET',
         body: JSON.stringify(kirimData),
         headers: {

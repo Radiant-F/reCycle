@@ -48,7 +48,7 @@ export default class Register extends Component {
         password: password,
         password_confirmation: password_confirmation,
       };
-      fetch('http://mini-project-e.herokuapp.com/api/register', {
+      fetch('https://mini-project-e.herokuapp.com/api/register', {
         method: 'POST',
         body: JSON.stringify(kirimData),
         headers: {
