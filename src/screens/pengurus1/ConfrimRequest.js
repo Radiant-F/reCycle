@@ -11,7 +11,6 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 
 export default class ConfrimRequest extends Component {
   constructor() {
