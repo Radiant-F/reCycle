@@ -32,6 +32,7 @@ class Request extends Component {
       nama_lokasi: '',
       loading: false,
       switch: false,
+      status: 1,
     };
   }
 
@@ -49,6 +50,9 @@ class Request extends Component {
 
   switchController() {
     this.setState({switch: !this.state.switch});
+  }
+
+  componentDidMount() {
     this.requestGPSPermission();
   }
 
@@ -56,15 +60,6 @@ class Request extends Component {
     try {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          title: 'Akses Ijin Lokasi',
-          message:
-            'Kami membutuhkan akses lokasi anda, ' +
-            'agar kami bisa menentukan lokasi.',
-          buttonNeutral: 'Nanti Saja',
-          buttonNegative: 'Batal',
-          buttonPositive: 'OKE',
-        },
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         console.log('Permission granted');
@@ -88,11 +83,12 @@ class Request extends Component {
       (error) => {
         console.log(error.code, error.message);
       },
-      {enableHighAccuracy: true},
+      {enableHighAccuracy: true, timeout: 15000},
     );
   }
 
   getLocationInfo() {
+    this.setState({status: 2});
     console.log('mengambil info lokasi..');
     fetch(
       `https://nominatim.openstreetmap.org/reverse?lat=${this.state.lokasi.latitude}&lon=${this.state.lokasi.longitude}&format=json`,
@@ -115,7 +111,7 @@ class Request extends Component {
 
   getUser() {
     console.log('mengambil info user..');
-    fetch('http://mini-project-e.herokuapp.com/api/user', {
+    fetch('https://mini-project-e.herokuapp.com/api/user', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -151,7 +147,7 @@ class Request extends Component {
         alamat: alamat,
       };
       fetch(
-        `http://mini-project-e.herokuapp.com/api/penjemputan/create/${this.state.id}`,
+        `https://mini-project-e.herokuapp.com/api/penjemputan/create/${this.state.id}`,
         {
           method: 'POST',
           body: JSON.stringify(kirimData),
@@ -299,7 +295,11 @@ class Request extends Component {
                 {this.state.nama_lokasi == '' ? (
                   <View style={styles.viewMap}>
                     <ActivityIndicator color="green" size="large" />
-                    <Text>Melacak Anda</Text>
+                    {this.state.status == 1 ? (
+                      <Text>Melacak Anda</Text>
+                    ) : (
+                      <Text>Mengambil info lokasi</Text>
+                    )}
                   </View>
                 ) : (
                   <>
